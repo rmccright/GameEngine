@@ -87,7 +87,7 @@ public class MainThread implements Runnable {
     public void setup() {
         Window.createWindow();
 
-        Graphics.placeVAOOnGraphicsCard(Graphics.createVAOFromModel(VectorFields.vectorFieldToModel("Terrain Test", VectorFields.loadVectorField("C:\\Users\\Randoph\\Desktop\\test2.vf"), 5, 5)));
+        Graphics.placeVAOOnGraphicsCard(Graphics.createVAOFromModel(VectorFields.vectorFieldToModel("Terrain Test", VectorFields.loadVectorField("VectorFields/test.vf"), 5, 5)));
 
         modelView.rotation = new Quaternion(new Vector3f(1.0f, 0f, 0f), (float) Math.toRadians(0));
         modelView.scale = new Vector3f(1f, 1f, 1f);
@@ -102,8 +102,8 @@ public class MainThread implements Runnable {
 
         testShader = new ShaderProgram();
         Graphics.createShaderProgram(testShader);
-        Graphics.addFragmentShaderToProgram(testShader, Shaders.loadShader("shaders\\basicFragment.fs.txt"));
-        Graphics.addVertexShaderToProgram(testShader, Shaders.loadShader("shaders\\basicVertex.vs.txt"));
+        Graphics.addFragmentShaderToProgram(testShader, Shaders.loadShader("shaders/basicFragment.fs.txt"));
+        Graphics.addVertexShaderToProgram(testShader, Shaders.loadShader("shaders/basicVertex.vs.txt"));
         Graphics.compileShaderProgram(testShader);
 
         Graphics.addUniform(testShader, "PVTransform");
