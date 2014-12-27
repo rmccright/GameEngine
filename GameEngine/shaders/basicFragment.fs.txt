@@ -1,0 +1,119 @@
+#version 330 
+
+struct LightSource
+{
+	bool isEnabled;
+	int type;
+	vec3 ambient;
+	vec3 color;
+	vec3 position;
+	vec3 halfVector; // surface orientation for shiniest spots
+	vec3 coneDirection;
+	float spotCosCutoff;
+	float spotExponent;
+	float constantAttenuation;
+	float linearAttenuation;
+	float quadraticAttenuation;
+};
+
+	// the set of lights to apply, per invocation of this shader
+	const int MaxLights = 10;
+    uniform LightSource Lights[MaxLights];
+
+	uniform vec3 cameraPosition;
+	
+	//materials
+	uniform float shininess; // exponent for sharping highlights
+	uniform float strength; // extra factor to adjust shininess
+	
+	in vec4 Color;
+	in vec3 Position;
+	in vec3 Normal; 
+
+	out vec4 fragColor;
+
+	vec3 halfVector;
+	vec3 cameraDirection;
+    vec3 lightDirection;
+	float lightDistance;
+    float attenuation;
+	float diffuse;
+	float specular;
+	vec3 scatteredLight;
+	vec3 reflectedLight;
+	
+	
+void main()
+{
+
+	scatteredLight = vec3(0.0);
+    reflectedLight = vec3(0.0);
+	
+	for(int a = 0; a < Lights.length(); a++){
+		if(! Lights[a].isEnabled)
+			continue;
+			
+		switch(Lights[a].type){
+			case 1:
+				halfVector = normalize(Lights[a].halfVector);
+				lightDirection = normalize(Lights[a].position);
+				attenuation = 1.0;
+				break;
+			case 2:
+				lightDirection = Lights[a].position - vec3(Position);
+			    lightDistance = length(lightDirection);
+				lightDirection = normalize(lightDirection);
+				cameraDirection = normalize(cameraPosition - Position);
+				halfVector = normalize(lightDirection + cameraDirection);
+				attenuation = 1.0 /(Lights[a].constantAttenuation
+								+ Lights[a].linearAttenuation * lightDistance
+								+ Lights[a].quadraticAttenuation * lightDistance * lightDistance);
+				
+				break;
+			case 3: 
+				lightDirection = Lights[a].position - vec3(Position);
+			    lightDistance = length(lightDirection);
+				lightDirection = normalize(lightDirection);
+				cameraDirection = normalize(cameraPosition - Position);
+				halfVector = normalize(lightDirection + cameraDirection);
+				attenuation = 1.0 /(Lights[a].constantAttenuation
+								+ Lights[a].linearAttenuation * lightDistance
+								+ Lights[a].quadraticAttenuation * lightDistance * lightDistance);
+				
+				float spotCos = dot(lightDirection, -Lights[a].coneDirection);
+				if (spotCos < Lights[a].spotCosCutoff)
+					attenuation = 0;
+				else
+					attenuation *= pow(spotCos,Lights[a].spotExponent);
+				
+				break;
+			default:
+				break;
+		}
+			
+		// compute cosine of the directions, using dot products,
+		// to see how much light would be reflected
+		diffuse = max(0.0, dot(Normal, lightDirection));
+		specular = max(0.0, dot(Normal, halfVector));
+	
+		// surfaces facing away from the light (negative dot products)
+		// won’t be lit by the directional light
+		if (diffuse == 0.0)
+			specular = 0.0;
+		else
+			specular = pow(specular, shininess)* strength; // sharpen the highlight
+	
+	
+		// Accumulate all the lights’ effects
+		scatteredLight += Lights[a].ambient * attenuation + Lights[a].color * diffuse * attenuation;
+		reflectedLight += Lights[a].color * specular * attenuation;
+		
+	}
+	
+	
+    // don’t modulate the underlying color with reflected light,
+    // only with scattered light
+    vec3 rgb = min(Color.rgb * scatteredLight + reflectedLight, vec3(1.0));
+    fragColor = vec4(rgb, Color.a);
+
+}
