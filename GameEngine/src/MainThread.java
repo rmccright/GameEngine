@@ -28,6 +28,8 @@ import org.lwjgl.util.glu.GLU;
 public class MainThread implements Runnable {
 
     public static void main(String[] args) {
+      
+      
         MainThread m = new MainThread();
         Thread t = new Thread(m);
         t.start();

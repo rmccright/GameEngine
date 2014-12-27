@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.vecmath.Vector4f;
+import org.lwjgl.util.vector.Vector4f;
+
 
 /**
  *
