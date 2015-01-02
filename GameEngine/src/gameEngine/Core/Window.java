@@ -6,6 +6,7 @@
 package gameEngine.Core;
 
 
+import java.awt.Canvas;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -45,6 +46,23 @@ public class Window {
             Display.setTitle("GameEngine");
             Display.setVSyncEnabled(isVsync());
             Display.create();
+        } catch (LWJGLException e) {
+            Display.destroy();
+            System.exit(1);
+        }
+        
+    }
+    
+        public static void createWindow(Canvas canvas){
+      
+            
+        try {
+            canvas.setVisible(true);
+            Display.setParent(canvas);
+            Display.create();
+            glViewport(0, 0, canvas.getWidth(), canvas.getHeight()); 
+           
+           
         } catch (LWJGLException e) {
             Display.destroy();
             System.exit(1);

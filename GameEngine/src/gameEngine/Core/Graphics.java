@@ -76,69 +76,13 @@ public class Graphics {
 
     }
 
-    public static List<VAO> vaos = new ArrayList();
-    public static List<Model> models = new ArrayList();
-
-    public static Model loadModel(String fileName) {
-        String fileType = fileName.substring(fileName.indexOf("."));
-        Model newModel;
-
-        switch (fileType) {
-            case ".stl":
-                newModel = gameEngine.Utilities.STLLoader.loadSTL(fileName.replace(fileType, ""), fileName);
-                models.add(newModel);
-                return newModel;
-           
-            case ".obj":
-                newModel = gameEngine.Utilities.OBJLoader.loadOBJ(fileName.replace(fileType, ""), fileName);
-                models.add(newModel);
-                
-                  return newModel;
-        }
-        return null;
-    }
-
-    public static void printLoadedModels() {
-        for (int a = 0; a < models.size(); a++) {
-            System.out.println("Model List: " + models.get(a).fileName);
-
-        }
-    }
-
-    public static VAO createVAOFromModel(Model data) {
    
-        VAO newVAO = new VAO();
-        VBO newVBO = new VBO();
-        List<vertexAtribute> vertexAtributes = new ArrayList();
-        vertexAtribute newVertexAtrib = new vertexAtribute();
-        vertexAtribute newColorAtrib = new vertexAtribute();
-        vertexAtribute newNormalAtrib = new vertexAtribute();
-        
-        FloatBuffer newBuffer = BufferUtils.createFloatBuffer(data.verticies.length + data.color.length + data.normals.length);
-        newBuffer.put(data.verticies);
-        newBuffer.put(data.color);
-        newBuffer.put(data.normals);
-        newBuffer.flip();
-        
-      
-        newVertexAtrib.setAtributes(0, 3, 0, 0, false);
-        newColorAtrib.setAtributes(1, 4, 0, data.verticies.length*4, false);
-        newNormalAtrib.setAtributes(2, 3, 0, data.verticies.length*4 + data.color.length*4, false);
-        
-        vertexAtributes.add(newVertexAtrib);
-        vertexAtributes.add(newColorAtrib);
-        vertexAtributes.add(newNormalAtrib);
-        
-        newVBO.setAttributes(0, GL15.GL_ARRAY_BUFFER, GL15.GL_STATIC_DRAW, GL11.GL_FLOAT, 0, newBuffer,vertexAtributes );
-        
-        List<VBO> vbos = new ArrayList();
-        vbos.add(newVBO);
-        
-        newVAO.setAtributes(data.fileName, GL_TRIANGLES, 0, data.verticies.length/3, vbos);
-        
-       vaos.add(newVAO);
-        return newVAO;
-    }
+  
+
+    
+
+ 
+
     
    
 
@@ -149,19 +93,7 @@ public class Graphics {
     //////////////////
     //VAO Managment
     
-     public static void printVAOs(){
-        for (int a = 0; a < vaos.size(); a++) {
-            System.out.println("VAO List: " + vaos.get(a).modelName);
-
-        }
-    }
-     
-    public static synchronized void subVBOData(VBO theVBO) {
-        glBindBuffer(theVBO.target, theVBO.ID);
-        glBufferSubData(theVBO.target, theVBO.offset, theVBO.buffer);
-        glBindBuffer(theVBO.target, 0);
-    }
-
+   
     public static synchronized void renderVAO(VAO theVAO) {
         
         glBindVertexArray(theVAO.ID);
@@ -220,6 +152,20 @@ public class Graphics {
         glDeleteVertexArrays(theVAO.ID);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //TEXTURES
     public static int loadPNGTexture(String filename, int textureUnit) {
         ByteBuffer buf = null;
@@ -298,115 +244,7 @@ public class Graphics {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    //SHADERS
-    public static void bindShaderProgram(ShaderProgram p) {
-        glUseProgram(p.ID);
-    }
-
-    public static void unbindShaderProgram() {
-        glUseProgram(0);
-    }
-
-    public static void createShaderProgram(ShaderProgram p) {
-        p.ID = glCreateProgram();
-        p.uniforms = new HashMap<>();
-
-        if (p.ID == 0) {
-            System.err.println("Shader program craetion failed");
-            System.exit(1);
-        }
-    }
-
-    public static void addUniform(ShaderProgram p, String uniform) {
-        int uniformLocation = glGetUniformLocation(p.ID, uniform);
-
-        if (uniformLocation == 0xFFFFFFFF) {
-            System.err.println("Uniform Location does not exist: " + uniform);
-            new Exception().printStackTrace();
-            System.exit(1);
-        }
-
-        p.uniforms.put(uniform, uniformLocation);
-    }
-
-    public static void addVertexShaderToProgram(ShaderProgram p, String file) {
-        addShaderToProgram(p, file, GL_VERTEX_SHADER);
-    }
-
-    public static void addFragmentShaderToProgram(ShaderProgram p, String file) {
-        addShaderToProgram(p, file, GL_FRAGMENT_SHADER);
-    }
-
-    public static void addGeometryShaderToProgram(ShaderProgram p, String file) {
-        addShaderToProgram(p, file, GL_GEOMETRY_SHADER);
-    }
-
-    public static void addShaderToProgram(ShaderProgram p, String file, int type) {
-        int shader = glCreateShader(type);
-        if (shader == 0) {
-            System.err.println("Shader creation failed");
-            System.exit(1);
-        }
-
-        glShaderSource(shader, file);
-        glCompileShader(shader);
-
-        if (glGetShaderi(shader, GL_COMPILE_STATUS) == 0) {
-            System.err.println(glGetShaderInfoLog(shader, 1024));
-            System.exit(1);
-        }
-
-        glAttachShader(p.ID, shader);
-    }
-
-    public static void compileShaderProgram(ShaderProgram p) {
-        glLinkProgram(p.ID);
-       
-        if (glGetProgrami(p.ID, GL_LINK_STATUS) == 0) {
-            System.err.println(glGetShaderInfoLog(p.ID, 1024));
-            System.exit(1);
-        }
-
-        glValidateProgram(p.ID);
-        if (glGetProgrami(p.ID, GL_VALIDATE_STATUS) == 0) {
-            System.err.println(glGetShaderInfoLog(p.ID, 1024));
-            System.exit(1);
-        }
-    }
-
-    public static void setShaderUniformi(ShaderProgram p, String uniformName, int value) {
-        glUniform1i(p.uniforms.get(uniformName), value);
-    }
-
-    public static void setShaderUniformf(ShaderProgram p, String uniformName, float value) {
-        glUniform1f(p.uniforms.get(uniformName), value);
-    }
-
-    public static void setShaderUniform(ShaderProgram p, String uniformName, Vector3f value) {
-        glUniform3f(p.uniforms.get(uniformName), value.GetX(), value.GetY(), value.GetZ());
-    }
-    
-    public static void setShaderUniform(ShaderProgram p, String uniformName, Matrix4f value) {
-        glUniformMatrix4(p.uniforms.get(uniformName), true, createFlippedBuffer(value));
-      
-    }
-
-    public void getShaderUniform() {
-
-    }
-
-    public static FloatBuffer createFlippedBuffer(Matrix4f value) {
-        FloatBuffer buffer = createFloatBuffer(4 * 4);
-        for (int a = 0; a < 4; a++) {
-            for (int b = 0; b < 4; b++) {
-                buffer.put(value.Get(a, b));
-            }
-        }
-        buffer.flip();
-
-        return buffer;
-    }
-
+   
     ///////////////////
     //Data Structures//
     ///////////////////
