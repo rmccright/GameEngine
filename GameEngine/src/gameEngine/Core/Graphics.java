@@ -1,68 +1,30 @@
 package gameEngine.Core;
 
-import gameEngine.Data.Model;
-import gameEngine.Data.ShaderProgram;
 import gameEngine.Data.VAO;
-import gameEngine.Data.VBO;
-import gameEngine.Data.vertexAtribute;
-
-import gameEngine.Utilities.Matrix4f;
-import gameEngine.Utilities.Vector3f;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import org.lwjgl.BufferUtils;
-import static org.lwjgl.BufferUtils.createFloatBuffer;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL15;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
-import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glCompileShader;
-import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.glCreateShader;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glGetProgrami;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
-import static org.lwjgl.opengl.GL20.glGetShaderi;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glShaderSource;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4;
-import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.opengl.GL20.glValidateProgram;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import org.lwjgl.opengl.GL30;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.PNGDecoder;
 
@@ -79,12 +41,6 @@ public class Graphics {
    
   
 
-    
-
- 
-
-    
-   
 
     
     
@@ -94,8 +50,8 @@ public class Graphics {
     //VAO Managment
     
    
-    public static synchronized void renderVAO(VAO theVAO) {
-        
+    public static synchronized void renderVAO(int theVAOID) {
+        VAO theVAO = VOs.getVAO(theVAOID);
         glBindVertexArray(theVAO.ID);
 
         for (int a = 0; a < theVAO.vbos.size(); a++) {

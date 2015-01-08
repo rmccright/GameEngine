@@ -5,6 +5,8 @@
  */
 package gameEngine.Data;
 
+import gameEngine.Utilities.Vector3f;
+
 
 /**
  *
@@ -13,4 +15,5 @@ package gameEngine.Data;
 public class Model {
     public String fileName;
     public float[] verticies,normals, texture, color;
+    public Vector3f max, min, center;
 }

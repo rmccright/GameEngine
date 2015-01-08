@@ -147,12 +147,14 @@ public class VectorFields {
         return tempVF; 
     }
     
-    public static Model vectorFieldToModel(String name, VectorField fieldIN, int spacingW, int spacingL){
+    public static Model vectorFieldToModel(String name, VectorField fieldIN, int totalW, int totalH){
         Model tempModel = new Model();
         int numRect = (fieldIN.width - 1) * (fieldIN.length - 1);
         int numTri = numRect * 2;
         int numVer = numTri * 3;
         int numFloat = numVer * 3;
+        float spacingW = totalW/(fieldIN.width - 1);
+        float spacingL = totalH/(fieldIN.length - 1);
      //   System.out.println("NumTri: " + numTri + " NumVer: " + numVer + " NumFloat: " + numFloat);
         
         int[] tempVerticieIndicies = new int[numVer];
@@ -182,7 +184,7 @@ public class VectorFields {
             
             vertexBufferPrep[tempIT++] = fieldIN.field.get(tempVerticieIndicies[a]).GetX()  + (spacingW * column);
             vertexBufferPrep[tempIT++] = fieldIN.field.get(tempVerticieIndicies[a]).GetY();
-            vertexBufferPrep[tempIT++] = fieldIN.field.get(tempVerticieIndicies[a]).GetZ() - (spacingL * row);
+            vertexBufferPrep[tempIT++] = fieldIN.field.get(tempVerticieIndicies[a]).GetZ() - (spacingL * row) + totalH;
         }
         
         

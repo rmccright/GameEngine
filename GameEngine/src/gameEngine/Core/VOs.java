@@ -25,9 +25,10 @@ import static org.lwjgl.opengl.GL15.glBufferSubData;
  */
 public class VOs {
      public static List<VAO> vaos = new ArrayList();
+     public static List<Integer> ID = new ArrayList();
+     private static Integer nextID = 0;
      
-     
-    public static VAO createVAOFromModel(Model data) {
+    public static int createVAOFromModel(Model data) {
    
         VAO newVAO = new VAO();
         VBO newVBO = new VBO();
@@ -59,15 +60,22 @@ public class VOs {
         newVAO.setAtributes(data.fileName, GL_TRIANGLES, 0, data.verticies.length/3, vbos);
         
        vaos.add(newVAO);
-        return newVAO;
+       Integer theID = nextID;
+       nextID ++;
+       ID.add(theID);
+       return theID;
     }
     
       public static void printVAOs(){
         for (int a = 0; a < vaos.size(); a++) {
-            System.out.println("VAO List: " + vaos.get(a).modelName);
+            System.out.println("VAO List: " + vaos.get(a).modelName + " ID: " + ID.get(a));
 
         }
     }
+      
+      public static VAO getVAO(int VAOID){
+           return vaos.get(ID.indexOf(VAOID));
+      }
      
     public static synchronized void subVBOData(VBO theVBO) {
         glBindBuffer(theVBO.target, theVBO.ID);

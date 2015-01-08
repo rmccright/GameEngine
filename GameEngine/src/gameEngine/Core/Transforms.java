@@ -18,7 +18,7 @@ public class Transforms {
     }
      public static List<Transformation> transforms = new ArrayList();
      public static List<Integer> ID = new ArrayList();
-    
+     private static Integer nextID = 0;
      
     public static Matrix4f GetTransformation(int transformID) {
         Transformation t = getTransform(transformID);
@@ -38,7 +38,7 @@ public class Transforms {
         return projectionMatrix.Mul(cameraRotation.Mul(cameraTranslation.Mul(transformationMatrix)));
     }
     
-    private static Integer nextID = 0;
+   
     public static int createTransform(){
         transforms.add(new Transformation());
         Integer theID = nextID;
@@ -46,6 +46,23 @@ public class Transforms {
         ID.add(theID);
         
         return theID ;
+    }
+    
+    public static void scale(int transformID, Vector3f amount){
+        getTransform(transformID).scale = getTransform(transformID).scale.Mul(amount);
+    }
+    public static void move(int transformID, Vector3f amount){
+        getTransform(transformID).translation = getTransform(transformID).translation.Add(new Vector3f(amount.GetX(), amount.GetY(), amount.GetZ()));
+    }
+    public static void rotate(int transformID, Quaternion rotation){
+       // getTransform(transformID).eulerRotation = getTransform(transformID).eulerRotation.Add(new Vector3f(xAmount, yAmount, zAmount));
+        
+        getTransform(transformID).rotation = (rotation).Mul(getTransform(transformID).rotation);
+
+    }
+    
+    public static void reset(int transformID){
+        transforms.set(ID.indexOf(transformID), new Transformation());
     }
     
     public static Transformation getTransform(int transformID){

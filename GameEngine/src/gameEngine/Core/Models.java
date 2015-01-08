@@ -1,6 +1,7 @@
 package gameEngine.Core;
 
 import gameEngine.Data.Model;
+import gameEngine.Utilities.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +27,13 @@ public class Models {
         switch (fileType) {
             case ".stl":
                 newModel = gameEngine.Utilities.STLLoader.loadSTL(fileName.replace(fileType, ""), fileName);
+                newModel = setBounds(newModel);
                 models.add(newModel);
                 return newModel;
            
             case ".obj":
                 newModel = gameEngine.Utilities.OBJLoader.loadOBJ(fileName.replace(fileType, ""), fileName);
+                newModel = setBounds(newModel);
                 models.add(newModel);
                 
                   return newModel;
@@ -45,18 +48,48 @@ public class Models {
         }
     }
          
-    public static  Model getBoundingBox(Model modelIN){
-        float xMin = modelIN.verticies[0], xMax = xMin, yMin = modelIN.verticies[1],yMax = yMin, zMin = modelIN.verticies[2],zMax = zMin;
-        for(int a = 3, b = modelIN.verticies.length/3; a < b; a++){
-            switch(a%3){
-                case 1:
-                case 2:
-                case 3:
-                    
+    public static  Model setBounds(Model in){
+        in.max = new Vector3f(in.verticies[0], in.verticies[1], in.verticies[2]);
+        in.min = new Vector3f(in.verticies[0], in.verticies[1], in.verticies[2]);
+        
+        for(int a = 0, b = in.verticies.length; a < b; a+=3){
+            if(in.verticies[a] > in.max.GetX()){
+                in.max.SetX(in.verticies[a]);
+            }
+            else if(in.verticies[a] < in.min.GetX()){
+                in.min.SetX(in.verticies[a]);
+            }
+            
+            if(in.verticies[a+1] > in.max.GetY()){
+                in.max.SetY(in.verticies[a+1]);
+            }
+            else if(in.verticies[a+1] < in.min.GetY()){
+                in.min.SetY(in.verticies[a+1]);
+            }
+
+            if(in.verticies[a+2] > in.max.GetZ()){
+                in.max.SetZ(in.verticies[a+2]);
+            }
+            else if(in.verticies[a+2] < in.min.GetZ()){
+                in.min.SetZ(in.verticies[a+2]);
             }
         }
         
-        Model boundingBox = new Model();
-        return boundingBox;
+        in.center = in.max.Add(in.min);
+        in.center = in.center.Div(2);
+        
+        for(int a = 0, b = in.verticies.length; a < b; a+=3){
+            in.verticies[a] = in.verticies[a] - in.center.GetX();
+            in.verticies[a+1] = in.verticies[a+1] - in.center.GetY();
+            in.verticies[a+2] = in.verticies[a+2] - in.center.GetZ();
+        }
+        
+        
+        return in;
     }
+    
+    
+    
+    
+    
 }

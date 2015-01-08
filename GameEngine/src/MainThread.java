@@ -45,8 +45,7 @@ public class MainThread implements Runnable {
 
     }
 
-    int worldView ;
-    int modelView ;
+   
 
     @Override
     public void run() {
@@ -94,15 +93,28 @@ public class MainThread implements Runnable {
     ShaderProgram testShader;
     Matrix4f projTrans;
     Matrix4f projectionMatrix;
-
+    int worldView ;
+    int modelView ;
     public void setup() {
         Window.createWindow();
 
-        Graphics.placeVAOOnGraphicsCard(VOs.createVAOFromModel(VectorFields.vectorFieldToModel("Print Bed",VectorFields.createVectorField(2,2),381,330)));
-        Graphics.placeVAOOnGraphicsCard(VOs.createVAOFromModel(Models.loadModel("C:\\Users\\Randoph\\Dropbox\\FeetzShare\\Deb's first shoe\\Recreus_sandals\\recreus_left_sandal.stl")));
-        modelView = Transforms.createTransform();
+        
+        
+        SceneObject test = new SceneObject();
+        SceneObject test2 = new SceneObject();
+        test.vao = VOs.createVAOFromModel(VectorFields.vectorFieldToModel("Print Bed",VectorFields.createVectorField(2,2),381,330));
+        test2.vao = VOs.createVAOFromModel(Models.loadModel("C:\\Users\\Randoph\\Dropbox\\FeetzShare\\Deb's first shoe\\Recreus_sandals\\recreus_left_sandal.stl"));
+        test.transformation = Transforms.createTransform();
+        test2.transformation =  Transforms.createTransform();
+        Graphics.placeVAOOnGraphicsCard(VOs.getVAO(test.vao));
+        Graphics.placeVAOOnGraphicsCard(VOs.getVAO(test2.vao));
+        sceneObjects.add(test);
+        sceneObjects.add(test2);
+        
+        
+        
+        
         worldView = Transforms.createTransform();
-
         projectionMatrix = new Matrix4f();
         projectionMatrix.InitPerspective(-75f, (float) Window.getWidth() / Window.getHeight(), .1f, 5000f);
 
@@ -190,10 +202,10 @@ public class MainThread implements Runnable {
          Shaders.setShaderUniform(testShader, "cameraPosition", Transforms.getTransform(worldView).translation);
          
          
-        for (int a = 0; a < VOs.vaos.size(); a++) {
-            Shaders.setShaderUniform(testShader, "PVTransform", Transforms.getProjectedTransformation(modelView, worldView, projectionMatrix));
-            Shaders.setShaderUniform(testShader, "WVTransform", Transforms.GetTransformation(modelView));
-            Graphics.renderVAO(VOs.vaos.get(a));
+        for (int a = 0; a < sceneObjects.size(); a++) {
+            Shaders.setShaderUniform(testShader, "PVTransform", Transforms.getProjectedTransformation(sceneObjects.get(a).transformation, worldView, projectionMatrix));
+            Shaders.setShaderUniform(testShader, "WVTransform", Transforms.GetTransformation(sceneObjects.get(a).transformation));
+            Graphics.renderVAO(sceneObjects.get(a).vao);
         }
 
         input();
@@ -201,6 +213,9 @@ public class MainThread implements Runnable {
     }
         
 
+    
+    
+    //camera stuff move soon
     boolean mouseLocked = false;
     Vector2f centerPosition = new Vector2f(Window.getWidth() / 2, Window.getHeight() / 2);
 
@@ -213,6 +228,7 @@ public class MainThread implements Runnable {
         if (Input.getMousePressed(1)) {
             Input.setCursor(true);
             mouseLocked = false;
+           
         }
         if (Input.getMousePressed(0)) {
             Input.setMousePosition(centerPosition);
@@ -232,8 +248,8 @@ public class MainThread implements Runnable {
         if (Input.getKeyHeld(Input.KEY_D)) {
             x += movAmt;
         }
-
-        Transforms.getTransform(worldView).translation = Transforms.getTransform(worldView).translation.Add(new Vector3f(10 * x, 0, 10 * z).Rotate(Transforms.getTransform(worldView).rotation));
+        
+        Transforms.move(worldView, new Vector3f(10 * x, 0, 10 * z).Rotate(Transforms.getTransform(worldView).rotation));  
 
         if (mouseLocked) {
             Vector2f deltaPos = Input.getMousePosition().Sub(centerPosition);
@@ -242,11 +258,11 @@ public class MainThread implements Runnable {
             boolean rotX = deltaPos.GetY() != 0;
 
             if (rotY) {
-                Transforms.getTransform(worldView).rotation = (new Quaternion(new Vector3f(0, 1 * (Transforms.getTransform(worldView).rotation.GetUp().GetY() / Math.abs(Transforms.getTransform(worldView).rotation.GetUp().GetY())), 0), (float) Math.toRadians(deltaPos.GetX() * sensitivity))).Mul(Transforms.getTransform(worldView).rotation);
+                Transforms.rotate(worldView, new Quaternion(new Vector3f(0, (Transforms.getTransform(worldView).rotation.GetUp().GetY() / Math.abs(Transforms.getTransform(worldView).rotation.GetUp().GetY())), 0), (float) Math.toRadians(deltaPos.GetX() * sensitivity)));
             }
 
             if (rotX) {
-                Transforms.getTransform(worldView).rotation = (new Quaternion(Transforms.getTransform(worldView).rotation.GetRight(), (float) Math.toRadians(-deltaPos.GetY() * sensitivity))).Mul(Transforms.getTransform(worldView).rotation);
+                Transforms.rotate(worldView, new Quaternion(Transforms.getTransform(worldView).rotation.GetRight(), (float) Math.toRadians(-deltaPos.GetY() * sensitivity)));
             }
 
             if (rotY || rotX) {

@@ -43,7 +43,7 @@ public class Window {
                 Display.setResizable(isResizable());
                 Display.setDisplayMode(new DisplayMode(800, 450));
             }
-            Display.setTitle("GameEngine");
+            Display.setTitle("Rendering Engine");
             Display.setVSyncEnabled(isVsync());
             Display.create();
         } catch (LWJGLException e) {
