@@ -7,11 +7,16 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_LINE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import org.lwjgl.opengl.GL13;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -60,7 +65,11 @@ public class Graphics {
 
             }
         }
-      glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    
+           glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        glEnable (GL_BLEND);
+glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         glDrawArrays(theVAO.mode, theVAO.first, theVAO.count);
 
         for (int a = 0; a < theVAO.vbos.size(); a++) {

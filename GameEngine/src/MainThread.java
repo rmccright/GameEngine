@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glFinish;
 import static org.lwjgl.opengl.GL11.glGetError;
@@ -59,6 +60,7 @@ public class MainThread implements Runnable {
         EngineRunning = true;
 
         setup();
+        
         Time.setLastFPS();
         while (EngineRunning) {
             if (Window.isCloseRequested()) {
@@ -96,14 +98,16 @@ public class MainThread implements Runnable {
     int worldView ;
     int modelView ;
     public void setup() {
+        
         Window.createWindow();
 
-        
+       
         
         SceneObject test = new SceneObject();
         SceneObject test2 = new SceneObject();
         test.vao = VOs.createVAOFromModel(VectorFields.vectorFieldToModel("Print Bed",VectorFields.createVectorField(2,2),381,330));
-        test2.vao = VOs.createVAOFromModel(Models.loadModel("C:\\Users\\Randoph\\Dropbox\\FeetzShare\\Deb's first shoe\\Recreus_sandals\\recreus_left_sandal.stl"));
+        test2.model = Models.loadModel("C:\\Users\\Randoph\\Dropbox\\FeetzShare\\Deb's first shoe\\Recreus_sandals\\recreus_left_sandal.stl");
+        test2.vao = VOs.createVAOFromModel(Models.getModel(test2.model));
         test.transformation = Transforms.createTransform();
         test2.transformation =  Transforms.createTransform();
         Graphics.placeVAOOnGraphicsCard(VOs.getVAO(test.vao));

@@ -55,11 +55,12 @@ public class Transforms {
         getTransform(transformID).translation = getTransform(transformID).translation.Add(new Vector3f(amount.GetX(), amount.GetY(), amount.GetZ()));
     }
     public static void rotate(int transformID, Quaternion rotation){
-       // getTransform(transformID).eulerRotation = getTransform(transformID).eulerRotation.Add(new Vector3f(xAmount, yAmount, zAmount));
+       //getTransform(transformID).eulerRotation = getTransform(transformID).eulerRotation.Add(new Vector3f(xAmount, yAmount, zAmount));
         
         getTransform(transformID).rotation = (rotation).Mul(getTransform(transformID).rotation);
 
     }
+    
     
     public static void reset(int transformID){
         transforms.set(ID.indexOf(transformID), new Transformation());

@@ -10,5 +10,6 @@ package gameEngine.Data;
  * @author Randoph
  */
 public class SceneObject {
+    public String name;
     public int model,shaderProgram, transformation, vao;
 }

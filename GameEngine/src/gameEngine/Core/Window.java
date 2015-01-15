@@ -46,6 +46,7 @@ public class Window {
             Display.setTitle("Rendering Engine");
             Display.setVSyncEnabled(isVsync());
             Display.create();
+            
         } catch (LWJGLException e) {
             Display.destroy();
             System.exit(1);
@@ -61,7 +62,8 @@ public class Window {
             Display.setParent(canvas);
             Display.create();
             glViewport(0, 0, canvas.getWidth(), canvas.getHeight()); 
-           
+                       glClearColor(0.2f, 0.9f, 0.6f, 1.0f);
+
            
         } catch (LWJGLException e) {
             Display.destroy();

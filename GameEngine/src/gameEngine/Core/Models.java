@@ -18,25 +18,34 @@ import java.util.List;
  */
 public class Models {
       public static List<Model> models = new ArrayList();
+      public static List<Integer> ID = new ArrayList();
+      private static Integer nextID = 0;
       
-      
-      public static Model loadModel(String fileName) {
+      public static Integer loadModel(String fileName) {
         String fileType = fileName.substring(fileName.indexOf("."));
         Model newModel;
-
+        Integer theID;
         switch (fileType) {
             case ".stl":
                 newModel = gameEngine.Utilities.STLLoader.loadSTL(fileName.replace(fileType, ""), fileName);
                 newModel = setBounds(newModel);
                 models.add(newModel);
-                return newModel;
+                theID = nextID;
+                nextID ++;
+                ID.add(theID);
+                return theID;
            
+                
             case ".obj":
                 newModel = gameEngine.Utilities.OBJLoader.loadOBJ(fileName.replace(fileType, ""), fileName);
                 newModel = setBounds(newModel);
                 models.add(newModel);
                 
-                  return newModel;
+                   models.add(newModel);
+                theID = nextID;
+                nextID ++;
+                ID.add(theID);
+                return theID;
         }
         return null;
     }
@@ -47,6 +56,10 @@ public class Models {
 
         }
     }
+         
+         public static Model getModel(int ModelID){
+           return models.get(ID.indexOf(ModelID));
+      }
          
     public static  Model setBounds(Model in){
         in.max = new Vector3f(in.verticies[0], in.verticies[1], in.verticies[2]);

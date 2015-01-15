@@ -114,6 +114,8 @@ void main()
     // don’t modulate the underlying color with reflected light,
     // only with scattered light
     vec3 rgb = min(Color.rgb * scatteredLight + reflectedLight, vec3(1.0));
+	
+   
     fragColor = vec4(rgb, Color.a);
 
 }
